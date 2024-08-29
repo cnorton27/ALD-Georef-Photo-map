@@ -197,37 +197,24 @@
             let current;
             let box;
 
-            map.addSource('plants_data', {
+            map.addSource('ALD_photos', {
                 type: 'geojson',
                 data: 'https://raw.githubusercontent.com/cnorton27/Garibaldi_iNaturalist_observations/main/iNaturalistGaribaldi/iNaturalist_observations/iNaturalist_observations.geojson?token=GHSAT0AAAAAACMXV7FZ7U7PP2OMB3RK7WKMZPZWEEA' // Replace with the URL of your GeoJSON data
             });
 
             map.addLayer({
-                id: 'highlighted-plants',
+                id: 'ALD_photo_points',
                 type: 'circle',
-                source: 'plants_data',
+                source: 'ALD_photos',
                 paint: {
                     'circle-color': '#AFFF00',
                     'circle-radius': 5,
                     'circle-stroke-width': .3,
                     'circle-stroke-color': '#fff',
                     'circle-opacity': 1
-                },
-                'filter': ['in', 'scientific', '']
+                }
             });
 
-
-            map.addLayer({
-                id: 'squam-plants',
-                type: 'circle',
-                source: 'plants_data',
-                paint: {
-                    'circle-color': '#11b4da',
-                    'circle-radius': 6,
-                    'circle-opacity': 0
-                }
-            },
-            );
         })
 
         ////////////////search similar features through mouse-over/////////////////////////////////////////////////////////////////////////
@@ -240,47 +227,29 @@
                 closeButton: false
             });
 
-            // function makes sure feature is not a duplicate caused by loading multiple map tiles at once
-            function getUniqueFeatures(features, comparatorProperty) {
-                const uniqueIds = new Set();
-                const uniqueFeatures = [];
-                for (const feature of features) {
-                    const id = feature.properties[comparatorProperty];
-                    if (!uniqueIds.has(id)) {
-                        uniqueIds.add(id);
-                        uniqueFeatures.push(feature);
-                    }
-                }
-                return uniqueFeatures;
-
-            }
-
-
-            map.on('mousemove', 'squam-plants', (e) => {
+            map.on('mousemove', 'ALD_photo_point', (e) => {
 
                 // feature = plant that mouse is hovering over
                 const feature = e.features[0];
 
-                const current_species = feature.properties.scientific
+                const current_photo = feature.properties.name
 
                 const relatedplants = map.querySourceFeatures('highlighted-plants', {  //'squam-plants'
                     sourceLayer: 'original',
-                    filter: ['in', 'scientific', current_species]
+                    filter: ['in', 'name', current_photo]
                 });
 
                 const uniqueplants = getUniqueFeatures(relatedplants, 'id');
 
 
-
-
                 const title = document.createElement('strong');
                 title.textContent =
-                    feature.properties.scientific
+                    feature.properties.name
 
                 const ID = document.createElement('div');
                 ID.textContent =
-                    'Total plants:' + " " +
-                    feature.properties.scientific//change later
+                    'Photo taken' + " " +
+                    feature.properties.name//change later
 
                 overlay.innerHTML = '';
                 overlay.style.display = 'block';
@@ -297,10 +266,10 @@
 
 
                 // Display a popup
-              //  popup3
-           //         .setLngLat(e.lngLat)
-             //       .setText(feature.properties.scientific)
-               //     .addTo(map);
+                popup3
+                    .setLngLat(e.lngLat)
+                    .setText(feature.properties.scientific)
+                    .addTo(map);
             });
 
 
