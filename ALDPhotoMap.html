@@ -20,21 +20,22 @@
             padding: 0;
         }
 
+        .mapboxgl-popup {
+        width: 100%;
+        max-width: 100%;
+        color: blue;
+        font:
+            12px/20px 'Helvetica Neue',
+            Arial,
+            Helvetica,
+            sans-serif;
+
+    }
 
         #map {
             position: absolute;
             width: 100%;
             height: 100%;
-        }
-
-        .boxdraw {
-            background: rgba(56, 135, 190, 0.1);
-            border: 2px solid #3887be;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
         }
 
         .popup_title {
@@ -49,23 +50,6 @@
             transform: translate(-50%, -50%);
             padding: 20px;
             z-index: 1000;
-        }
-
-        .popup_title img {
-            width: 100%;
-            /* Ensure image fills the container width */
-            height: auto;
-            /* Maintain aspect ratio */
-            display: block;
-            /* Prevents extra space below image */
-        }
-
-        .popup_title .close {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 20px;
-            cursor: pointer;
         }
 
         .button {
@@ -93,15 +77,6 @@
             /* White text on hover */
         }
 
-        .mapboxgl-popup {
-            max-width: 400px;
-            font:
-                12px/20px 'Helvetica Neue',
-                Arial,
-                Helvetica,
-                sans-serif;
-        }
-
         .map-overlay {
             font:
                 12px/20px 'Helvetica Neue',
@@ -118,6 +93,7 @@
             padding: 10px;
             display: none;
         }
+
     </style>
 
 
@@ -138,7 +114,6 @@
 
     <div id="map-overlay" class="map-overlay"></div>
 
-
     <script>
 
         // Function to toggle the visibility of the popup
@@ -152,13 +127,12 @@
         }
 
 
-
         ////// map /////////////////////////////////////////////////////////////
         mapboxgl.accessToken = 'pk.eyJ1Ijoibm9ydG9uMjciLCJhIjoiY2xoam9hNHI5MGpuMjNscWtlcTF2dTN3dyJ9.xx0qCx-woV7mYFkrMNQmiA';
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/norton27/cm0ftka2600y101pw4wj00hjq',
-            center: [-139.053, 69.56222553116095], //insert coordinates here    
+            center: [-138.97053, 69.56222553116095], //insert coordinates here    
             zoom: 11,
             pitch: 60,
             bearing: 0
@@ -183,13 +157,10 @@
 
         //////////////////////////// Adding layers ///////////////////////////////////////
 
-        // Disable default box zooming.
-        map.boxZoom.disable();
 
         // Create a popup, but don't add it to the map yet.
 
         map.on('load', () => {
-
 
             const canvas = map.getCanvasContainer();
 
@@ -199,7 +170,7 @@
 
             map.addSource('ALD_photos', {
                 type: 'geojson',
-                data: 'https://raw.githubusercontent.com/cnorton27/Garibaldi_iNaturalist_observations/main/iNaturalistGaribaldi/iNaturalist_observations/iNaturalist_observations.geojson?token=GHSAT0AAAAAACMXV7FZ7U7PP2OMB3RK7WKMZPZWEEA' // Replace with the URL of your GeoJSON data
+                data: 'https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/ALDs_processed.geojson' // URL of GeoJSON data
             });
 
             map.addLayer({
@@ -215,73 +186,62 @@
                 }
             });
 
+        map.addLayer({
+                id: 'ALD_highlighted',
+                type: 'circle',
+                source: 'ALD_photos',
+                paint: {
+                    'circle-color': '#AFFF00',
+                    'circle-radius': 5,
+                    'circle-stroke-width': .3,
+                    'circle-stroke-color': '#fff',
+                    'circle-opacity': 1
+                }
+            });
         })
 
         ////////////////search similar features through mouse-over/////////////////////////////////////////////////////////////////////////
 
-        map.on('load', () => {
-            const overlay = document.getElementById('map-overlay');
-
-            // Create a popup, but don't add it to the map yet.
-            const popup3 = new mapboxgl.Popup({
-                closeButton: false
-            });
-
-            map.on('mousemove', 'ALD_photo_point', (e) => {
-
-                // feature = plant that mouse is hovering over
-                const feature = e.features[0];
-
-                const current_photo = feature.properties.name
-
-                const relatedplants = map.querySourceFeatures('highlighted-plants', {  //'squam-plants'
-                    sourceLayer: 'original',
-                    filter: ['in', 'name', current_photo]
-                });
-
-                const uniqueplants = getUniqueFeatures(relatedplants, 'id');
-
-
-                const title = document.createElement('strong');
-                title.textContent =
-                    feature.properties.name
-
-                const ID = document.createElement('div');
-                ID.textContent =
-                    'Photo taken' + " " +
-                    feature.properties.name//change later
-
-                overlay.innerHTML = '';
-                overlay.style.display = 'block';
-
-                overlay.appendChild(title);
-                overlay.appendChild(ID);
-
-
-                map.setFilter('highlighted-plants', [
-                    'in',
-                    'scientific',
-                    feature.properties.scientific
-                ]);
-
-
-                // Display a popup
-                popup3
-                    .setLngLat(e.lngLat)
-                    .setText(feature.properties.scientific)
-                    .addTo(map);
-            });
-
-
-
-            map.on('mouseleave', 'squam-plants', () => {
-                map.getCanvas().style.cursor = '';
-                popup3.remove();
-                map.setFilter('highlighted-plants', ['in', 'scientific', '']);
-                overlay.style.display = 'none';
-            });
+        // Create a popup, but don't add it to the map yet.
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
         });
 
+        map.on('mouseenter', 'ALD_photo_points', (e) => {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
+
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            var image_path = e.features[0].properties.image_path
+
+            var image_popup = '<div class="ald_popup">' +
+                '<h3>ALD</h3>' +
+                '<p>Photo of ALD.</p>' +
+                '<img width="600" height="auto" src="' + image_path + '"alt="Image">' +
+                '</div>'
+    
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+            }
+
+    
+            popup.setLngLat(coordinates).setHTML(image_popup).addTo(map);
+            
+            
+        });
+
+        map.on('mouseleave', 'ALD_photo_points', () => {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+        });
 
     </script>
 </body>
