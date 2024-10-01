@@ -16,3 +16,4 @@ for index, row in gdf.iterrows():
     gdf.loc[index, 'image_path'] = str(image_full_path)
 
 gdf.to_file("ALDs_processed.geojson", driver='GeoJSON')
+
