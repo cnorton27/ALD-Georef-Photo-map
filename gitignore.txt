@@ -4,6 +4,7 @@
 *.tif
 *.shp
 *.venv
+
 ## temporary files
 *~
 # Word temporary
