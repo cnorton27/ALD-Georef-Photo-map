@@ -3,7 +3,7 @@
 *.zip
 *.tif
 *.shp
-*.venv
+*.venv/
 
 ## temporary files
 *~
