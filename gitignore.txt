@@ -3,7 +3,7 @@
 *.zip
 *.tif
 *.shp
-*.venv\
+#*.venv\
 
 ## temporary files
 *~
@@ -29,6 +29,9 @@ Thumbs.db
 # index.lock files
 index.lock
 .httr-oauth
+
+#ignore for R
+.Rproj
 
 # Ignore Rplots.pdf files
 Rplots.pdf
