@@ -3,7 +3,10 @@
 *.zip
 *.tif
 *.shp
-#*.venv\
+*.venv\
+
+.wav
+.txt
 
 ## temporary files
 *~
@@ -30,8 +33,17 @@ Thumbs.db
 index.lock
 .httr-oauth
 
-#ignore for R
+
+## prevent users to commit their own ShrubHub RProject
+.Rproj.user
+QHI_map_R.Rproj
 .Rproj
+## prevent users to commit their own .RData and .Rhistory in mutual area
+.RData
+.Rhistory
+workspace/.RData
+workspace/.Rhistory
+.Rapp.history
 
 # Ignore Rplots.pdf files
 Rplots.pdf
