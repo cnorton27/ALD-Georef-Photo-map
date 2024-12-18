@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QHI Plants</title>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- Turf code. -->
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> 
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .mapboxgl-popup {
+        width: 100%;
+        max-width: 100%;
+        color: black;
+        font:
+            12px/20px 'Helvetica Neue',
+            Arial,
+            Helvetica,
+            sans-serif;
+
+    }
+
+        #map {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .boxdraw {
+            background: rgba(56, 135, 190, 0.1);
+            border: 2px solid #3887be;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .popup_title {
+            position: absolute;
+            top: 40%;
+            bottom: 60%;
+            left: 50%;
+            width: 70%;
+            /* 1/3 of the viewport width */
+            height: 70%;
+            /* 1/3 of the viewport height */
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .popup_title img {
+            width: 100%;
+            /* Ensure image fills the container width */
+            height: auto;
+            /* Maintain aspect ratio */
+            display: block;
+            /* Prevents extra space below image */
+        }
+
+        .popup_title .close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .button {
+            position: absolute;
+            border: white;
+            color: brown;
+            /* White text */
+            padding: 15px 32px;
+            /* Padding */
+            text-align: center;
+            /* Center text */
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            /* Cursor on hover */
+        }
+
+        .button:hover {
+            background-color: #97cb34;
+            /* Darker green background on hover */
+            color: white;
+            /* White text on hover */
+        }
+
+        .mapboxgl-popup {
+            max-width: 4000px;
+            font:
+                12px/20px 'Helvetica Neue',
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+        .map-overlay {
+            font:
+                12px/20px 'Helvetica Neue',
+                Arial,
+                Helvetica,
+                sans-serif;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            position: absolute;
+            width: 25%;
+            top: 10px;
+            left: 80%;
+            padding: 10px;
+            display: none;
+        }
+
+        .filter-group {
+        font:
+            12px/20px 'Helvetica Neue',
+            Arial,
+            Helvetica,
+            sans-serif;
+        font-weight: 600;
+        position: absolute;
+        bottom: 30px;
+        right: 10px;
+        z-index: 1;
+        border-radius: 3px;
+        width: 120px;
+        color: #fff;
+        }
+
+        .filter-group input[type='checkbox']:first-child + label {
+            border-radius: 3px 3px 0 0;
+        }
+
+        .filter-group label:last-child {
+            border-radius: 0 0 3px 3px;
+            border: none;
+        }
+
+        .filter-group input[type='checkbox'] {
+            display: none;
+        }
+
+        .filter-group input[type='checkbox'] + label {
+            background-color: #97cb34;
+            display: block;
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        }
+
+        .filter-group input[type='checkbox'] + label {
+            background-color: #97cb34;
+            text-transform: capitalize;
+        }
+
+        .filter-group input[type='checkbox'] + label:hover,
+        .filter-group input[type='checkbox']:checked + label {
+            background-color: #97cb34;
+        }
+
+        .filter-group input[type='checkbox']:checked + label:before {
+            content: '✔';
+            margin-right: 5px;
+        }
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+    <div id='map'></div>
+    <nav id="filter-group" class="filter-group"></nav>
+
+
+    <div id="popup_title" class="popup_title">
+        <span class="close" onclick="togglePopup()">&times;</span>
+        <img id="popup_titleImg" src="title_page-03.png" alt="Popup Image"> 
+    </div>
+
+    <button class="button" onclick="togglePopup()">Toggle Title</button>
+
+    <div id="map-overlay" class="map-overlay"></div>
+
+
+    <script>
+
+        // Function to toggle the visibility of the popup (intro slide)
+        function togglePopup() {
+            var popup_title = document.getElementById('popup_title');
+            if (popup_title.style.display === 'none' || popup_title.style.display === '') {
+                popup_title.style.display = 'block';
+            } else {
+                popup_title.style.display = 'none';
+            }
+        }
+
+
+        ////// map /////////////////////////////////////////////////////////////
+        mapboxgl.accessToken = 'pk.eyJ1Ijoibm9ydG9uMjciLCJhIjoiY2xoam9hNHI5MGpuMjNscWtlcTF2dTN3dyJ9.xx0qCx-woV7mYFkrMNQmiA';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/norton27/cm0ftka2600y101pw4wj00hjq',
+            center: [-138.97053, 69.56222553116095], //insert coordinates here    
+            zoom: 11,
+            pitch: 60,
+            bearing: 0
+        });
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // Add a scale control to the map
+        map.addControl(new mapboxgl.ScaleControl());
+
+        // adding 3d terrain
+        map.on('style.load', () => {
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512,
+                'maxzoom': 14
+            });
+            // add the DEM source as a terrain layer with exaggerated height
+            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+        });
+
+
+        //////////////////////////// Bounding Box Query ///////////////////////////////////////
+
+        // Disable default box zooming.
+        map.boxZoom.disable();
+
+        map.on('load', () => {
+
+
+            const canvas = map.getCanvasContainer();
+
+            let start;
+            let current;
+            let box;
+
+            map.addSource('ALD_photos', {
+                type: 'geojson',
+                data: 'https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/ALDs_processed.geojson' // URL of GeoJSON data
+            });
+
+            map.addLayer({
+                id: 'ALD_photo_points',
+                type: 'circle',
+                source: 'ALD_photos',
+                paint: {
+                    'circle-color': '#AFFF00',
+                    'circle-radius': 5,
+                    'circle-stroke-width': .3,
+                    'circle-stroke-color': '#fff',
+                    'circle-opacity': 1
+                }
+            });
+
+        map.addLayer({
+                id: 'ALD_highlighted',
+                type: 'circle',
+                source: 'ALD_photos',
+                paint: {
+                    'circle-color': '#AFFF00',
+                    'circle-radius': 5,
+                    'circle-stroke-width': .3,
+                    'circle-stroke-color': '#fff',
+                    'circle-opacity': 1
+                }
+            });
+        
+
+
+            canvas.addEventListener('mousedown', mouseDown, true);
+
+            // Return the xy coordinates of the mouse position
+            function mousePos(e) {
+                const rect = canvas.getBoundingClientRect();
+                return new mapboxgl.Point(
+                    e.clientX - rect.left - canvas.clientLeft,
+                    e.clientY - rect.top - canvas.clientTop
+                );
+            }
+
+            function mouseDown(e) {
+                // Continue the rest of the function if the shiftkey is pressed.
+                if (!(e.shiftKey && e.button === 0)) return;
+
+                // Disable default drag zooming when the shift key is held down.
+                map.dragPan.disable();
+
+                // Call functions for the following events
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+                document.addEventListener('keydown', onKeyDown);
+
+                // Capture the first xy coordinates
+                start = mousePos(e);
+            }
+
+            function onMouseMove(e) {
+                // Capture the ongoing xy coordinates
+                current = mousePos(e);
+
+                // Append the box element if it doesnt exist
+                if (!box) {
+                    box = document.createElement('div');
+                    box.classList.add('boxdraw');
+                    canvas.appendChild(box);
+                }
+
+                const minX = Math.min(start.x, current.x),
+                    maxX = Math.max(start.x, current.x),
+                    minY = Math.min(start.y, current.y),
+                    maxY = Math.max(start.y, current.y);
+
+                // Adjust width and xy position of the box element ongoing
+                const pos = `translate(${minX}px, ${minY}px)`;
+                box.style.transform = pos;
+                box.style.width = maxX - minX + 'px';
+                box.style.height = maxY - minY + 'px';
+            }
+
+            function onMouseUp(e) {
+                // Capture xy coordinates
+                finish([start, mousePos(e)]);
+            }
+
+            function onKeyDown(e) {
+                // If the ESC key is pressed
+                if (e.keyCode === 27) finish();
+            }
+
+            function finish(bbox) {
+                // Remove these events now that finish has been called.
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('keydown', onKeyDown);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                if (box) {
+                    box.parentNode.removeChild(box);
+                    box = null;
+                }
+
+                if (bbox) {
+                    const features = map.queryRenderedFeatures(bbox, {
+                        layers: ['ALD_photo_points']
+                    });
+
+                    if (features.length >= 10000) {
+                        return window.alert('Select a smaller number of features');
+                    }
+
+                    // set filter for highlighted plants layer, uses ID property to ensure no duplicates
+                    const coords = features.map((feature) => feature.properties.name);
+                    map.setFilter('ALD_highlighted', ['in', 'name', ...coords]);
+                }
+
+                map.dragPan.enable();
+            }
+
+            //changes mouse to pointer
+            map.on('mousemove', (e) => {
+                const features = map.queryRenderedFeatures(e.point, {
+                    layers: ['ALD_highlighted']
+                });
+
+            });
+
+            //popup ... might delete or change info to a picture of the plants from iNaturalist later
+            
+        const popup = new mapboxgl.Popup({
+            closeButton: true,
+            closeOnClick: false,
+            anchor: 'right'
+           
+        });
+            
+        map.on('click', 'ALD_photo_points', (e) => {
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const PhotoName = e.features[0].properties.name;
+                var image_path = e.features[0].properties.image_url
+
+                const image_popup = `
+                <div class="ald_popup">
+                <h3>${PhotoName}</h3>
+
+
+                <img src="${image_path}" alt="${PhotoName}" style="width: auto; height: 400px;">
+                '</div>'
+            `;
+    
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+                if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+                }
+
+    
+            popup.setLngLat(coordinates).setHTML(image_popup).addTo(map);
+            
+
+
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+
+        });
+        
+
+    //////////////////// Query by iNat observer /////////////////////////////////////////
+    
+        const filterGroup = document.getElementById('filter-group');
+
+        const updateLayerFilter = () => {
+            // get an array of icon names that corresponds to the currently checked checkboxes
+            const checkedDisturbances = [...document.getElementsByTagName('input')]
+                .filter((el) => el.checked)
+                .map((el) => el.id);
+
+            // use an 'in' expression to filter the layer
+            map.setFilter('base-plants', ['in', 'user_login', ...checkedDisturbances]);
+        };
+
+        // get an array of all unique `icon` properties
+        const Disturbances = ['camerondeckert', 'teamshrub', 'ciaranorton', 'beaucheminalex', 'elias_bowman', 'charlottemittelstaedt', 'anyagbee', 'laurenmoody', 'seigna_kathleen', 'gina_mamayauk', 'micaheckert', 'snaughtin'];
+
+
+    //    for (const feature of source.features) {                                                          /// need to finish this code which populated Disturbances list
+   //         const DisturbanceType = feature.properties.user_login;
+   //         if (!Disturbances.includes(DisturbanceType)) Disturbances.push(DisturbanceType);
+   //     }
+
+        // for each `icon` value, create a checkbox and label
+        for (const DisturbanceType of Disturbances) {
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = DisturbanceType;
+            input.checked = true;
+            filterGroup.appendChild(input);
+
+            const label = document.createElement('label');
+            label.setAttribute('for', DisturbanceType);
+            label.textContent = DisturbanceType;
+            filterGroup.appendChild(label);
+
+            // When any checkbox changes, update the filter.
+            input.addEventListener('change', updateLayerFilter);
+        }
+    });
+        ////////////////search similar features through mouse-over/////////////////////////////////////////////////////////////////////////
+
+        map.on('load', () => {
+            const overlay = document.getElementById('map-overlay');
+
+            // Create a popup, but don't add it to the map yet.
+            const popup3 = new mapboxgl.Popup({
+                closeButton: false
+            });
+
+            // function makes sure feature is not a duplicate caused by loading multiple map tiles at once
+            function getUniqueFeatures(features, comparatorProperty) {
+                const uniqueIds = new Set();
+                const uniqueFeatures = [];
+                for (const feature of features) {
+                    const id = feature.properties[comparatorProperty];
+                    if (!uniqueIds.has(id)) {
+                        uniqueIds.add(id);
+                        uniqueFeatures.push(feature);
+                    }
+                }
+                return uniqueFeatures;
+
+            }
+
+            map.on('mousemove', 'ALD_photo_points', (e) => {
+
+                // feature = plant that mouse is hovering over
+                const feature = e.features[0];
+
+                const current_feature = feature.properties.name
+
+                const relatedplants = map.querySourceFeatures('highlighted-plants', {  //'QHI-plants'
+                    sourceLayer: 'original',
+                    filter: ['in', 'name', current_feature]
+                });
+
+                const uniqueplants = getUniqueFeatures(relatedplants, 'ID');
+
+                const title = document.createElement('strong');
+                title.textContent =
+                    feature.properties.name
+
+                const ID = document.createElement('div');
+                ID.textContent =
+                    'Total observations:' + " " +
+                    feature.properties.species_count
+
+                overlay.innerHTML = '';
+                overlay.style.display = 'block';
+
+                overlay.appendChild(title);
+                overlay.appendChild(ID);
+
+
+                map.setFilter('highlighted-plants', [
+                    'in',
+                    'name',
+                    feature.properties.name
+                ]);
+
+            });
+
+            map.on('mouseleave', 'QHI-plants', () => {
+                map.getCanvas().style.cursor = '';
+                popup3.remove();
+                map.setFilter('highlighted-plants', ['in', 'name', '']);
+                overlay.style.display = 'none';
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>

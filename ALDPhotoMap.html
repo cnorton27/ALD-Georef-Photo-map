@@ -93,6 +93,85 @@
             display: none;
         }
 
+        .mapboxgl-popup {
+            max-width: 4000px;
+            font:
+                12px/20px 'Helvetica Neue',
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+        
+        .map-overlay {
+            font:
+                12px/20px 'Helvetica Neue',
+                Arial,
+                Helvetica,
+                sans-serif;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            position: absolute;
+            width: 25%;
+            top: 10px;
+            left: 80%;
+            padding: 10px;
+            display: none;
+        }
+
+        .filter-group {
+        font:
+            12px/20px 'Helvetica Neue',
+            Arial,
+            Helvetica,
+            sans-serif;
+        font-weight: 600;
+        position: absolute;
+        bottom: 30px;
+        right: 10px;
+        z-index: 1;
+        border-radius: 3px;
+        width: 120px;
+        color: #fff;
+        }
+
+        .filter-group input[type='checkbox']:first-child + label {
+            border-radius: 3px 3px 0 0;
+        }
+
+        .filter-group label:last-child {
+            border-radius: 0 0 3px 3px;
+            border: none;
+        }
+
+        .filter-group input[type='checkbox'] {
+            display: none;
+        }
+
+        .filter-group input[type='checkbox'] + label {
+            background-color: #97cb34;
+            display: block;
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        }
+
+        .filter-group input[type='checkbox'] + label {
+            background-color: #97cb34;
+            text-transform: capitalize;
+        }
+
+        .filter-group input[type='checkbox'] + label:hover,
+        .filter-group input[type='checkbox']:checked + label {
+            background-color: #97cb34;
+        }
+
+        .filter-group input[type='checkbox']:checked + label:before {
+            content: '✔';
+            margin-right: 5px;
+        }
+
     </style>
 
 
@@ -197,7 +276,7 @@
                     'circle-opacity': 1
                 }
             });
-        })
+        
 
         ////////////////search similar features through mouse-over/////////////////////////////////////////////////////////////////////////
 
@@ -205,24 +284,26 @@
         const popup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false,
-            anchor: 'auto'
+            anchor: 'right'
         });
 
-        map.on('mouseenter', 'ALD_photo_points', (e) => {
+        map.on('click', 'ALD_photo_points', (e) => {
             // Change the cursor style as a UI indicator.
             map.getCanvas().style.cursor = 'pointer';
 
             // Copy coordinates array.
             const coordinates = e.features[0].geometry.coordinates.slice();
-            var image_path = e.features[0].properties.image_path
+            const image_path = e.features[0].properties.image_path
 
-            var image_popup = `
+            const image_popup = `
             <div class="ald_popup">
             <h3>ALD</h3>
-            <p>Photo of ALD.</p>' +
-                '<img width="600" height="auto" src="' + image_path + '"alt="Image">' +
+            <p>Photo of ALD.</p>'
+            
+            <img src="${image_path}" alt="${ScientificName}" style="width: auto; height: 400px;">
+
                 '</div>'
-    
+                `;
 
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
@@ -236,13 +317,15 @@
     
             popup.setLngLat(coordinates).setHTML(image_popup).addTo(map);
             
-            
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+
         });
 
-        map.on('mouseleave', 'ALD_photo_points', () => {
-            map.getCanvas().style.cursor = '';
-            popup.remove();
-        });
+    });
+ 
 
     </script>
 </body>
