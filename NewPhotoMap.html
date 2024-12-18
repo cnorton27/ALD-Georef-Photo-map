@@ -401,7 +401,7 @@
         map.on('click', 'ALD_photo_points', (e) => {
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const PhotoName = e.features[0].properties.name;
-                var image_path = e.features[0].properties.image_url
+                var image_path = e.features[0].properties.image_path
 
                 const image_popup = `
                 <div class="ald_popup">
@@ -449,7 +449,7 @@
         };
 
         // get an array of all unique `icon` properties
-        const Disturbances = ['camerondeckert', 'teamshrub', 'ciaranorton', 'beaucheminalex', 'elias_bowman', 'charlottemittelstaedt', 'anyagbee', 'laurenmoody', 'seigna_kathleen', 'gina_mamayauk', 'micaheckert', 'snaughtin'];
+        const Disturbances = ['ALD Map', 'Training Data', 'Photos', 'Vegetation classification'];
 
 
     //    for (const feature of source.features) {                                                          /// need to finish this code which populated Disturbances list
@@ -529,7 +529,7 @@
                 overlay.appendChild(ID);
 
 
-                map.setFilter('highlighted-plants', [
+                map.setFilter('ALD_highlighted', [
                     'in',
                     'name',
                     feature.properties.name
@@ -540,7 +540,7 @@
             map.on('mouseleave', 'QHI-plants', () => {
                 map.getCanvas().style.cursor = '';
                 popup3.remove();
-                map.setFilter('highlighted-plants', ['in', 'name', '']);
+                map.setFilter('ALD_highlighted', ['in', 'name', '']);
                 overlay.style.display = 'none';
             });
         });
