@@ -21,9 +21,8 @@
         }
 
         .mapboxgl-popup {
-        width: 100%;
-        max-width: 100%;
-        color: blue;
+        max-width: 4000px;
+        color: black;
         font:
             12px/20px 'Helvetica Neue',
             Arial,
@@ -205,7 +204,8 @@
         // Create a popup, but don't add it to the map yet.
         const popup = new mapboxgl.Popup({
             closeButton: false,
-            closeOnClick: false
+            closeOnClick: false,
+            anchor: 'auto'
         });
 
         map.on('mouseenter', 'ALD_photo_points', (e) => {
@@ -216,9 +216,10 @@
             const coordinates = e.features[0].geometry.coordinates.slice();
             var image_path = e.features[0].properties.image_path
 
-            var image_popup = '<div class="ald_popup">' +
-                '<h3>ALD</h3>' +
-                '<p>Photo of ALD.</p>' +
+            var image_popup = `
+            <div class="ald_popup">
+            <h3>ALD</h3>
+            <p>Photo of ALD.</p>' +
                 '<img width="600" height="auto" src="' + image_path + '"alt="Image">' +
                 '</div>'
     

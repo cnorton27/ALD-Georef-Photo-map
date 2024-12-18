@@ -70,6 +70,18 @@ def get_gps_data(image_path):
 
     return [longitude, latitude]  # Ensure the order is [longitude, latitude]
 
+def get_date_data(image_path):
+    """
+    Retrieves date time data from the given image.
+    """
+    time = gpsphoto.getGPSFormattedTime(image_path)
+    if time is None:
+        print(f"Warning: No timedata found for {image_path}.")
+        return None  # or return default coordinates if needed
+
+    return time  # Ensure the order is [longitude, latitude]
+
+
 def features2collection(image_dir, output_json_path):
   """
   Converts features feature collection and writes to a geojson file.
@@ -91,6 +103,7 @@ def features2collection(image_dir, output_json_path):
       finished_feature = image2json(i)
       feature_coll.append(finished_feature)
       return feature_coll
+    
 
 def image2json(image):
     """
@@ -98,6 +111,7 @@ def image2json(image):
     """
     name = os.path.splitext(os.path.basename(test_photo))[0]
     gps_data = get_gps_data(image)
+    date_tine = get_date_data(image)
 
     return {
             "type": "Feature",
@@ -112,6 +126,8 @@ def image2json(image):
 
 Directory = '/content/drive/MyDrive/ALD_photos_2024_processed'
 output_geojson = '/content/drive/MyDrive/ALD_photos_2024_processed/test.json'
-
+ald_photos = 'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
 # Example usage:
 # features2collection('/path/to/images', '/path/to/output.geojson')
+
+features2collection(ald_photos, output_geojson)
