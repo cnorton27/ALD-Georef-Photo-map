@@ -1,5 +1,4 @@
 #pip install piexif exif pillow_heif gpsphoto exifread
-# pip freeze
 
 #import libraries
 from PIL.ExifTags import TAGS
@@ -15,14 +14,16 @@ import re
 import geopandas as gpd
 import pandas as pd
 from GPSPhoto import gpsphoto
+from GPSPhoto.gpsphoto import GPSInfo
 import os
+import exifread
 
 #code adapted from https://stackoverflow.com/questions/54395735/how-to-work-with-heic-image-file-types-in-python
 #converts .HEIC to JPG (keeps original) AND reduces size to 25% quality
 
 def convert_heic_to_jpeg(dir_of_interest, out_dir):
         filenames = os.listdir(dir_of_interest)
-        filenames_matched = [re.search("\.HEIC$|\.heic$", filename) for filename in filenames]
+        filenames_matched = [re.search(r"\.HEIC$|\.heic$", filename) for filename in filenames]
 
         # Extract files of interest
         HEIC_files = []
@@ -74,19 +75,22 @@ def get_date_data(image_path):
     """
     Retrieves date time data from the given image.
     """
-    time = gpsphoto.getGPSFormattedTime(image_path)
-    if time is None:
-        print(f"Warning: No timedata found for {image_path}.")
-        return None  # or return default coordinates if needed
+    photo = gpsphoto.getGPSData(image_path)
+    if photo is None:
+        print(f"Warning: No GPS data found for {image_path}.")
+        return None  # Handle case where no GPS data is returned
+    
+    if 'DateTime' in photo:
+        return photo['DateTime']
+    else:
+        print("Date-Time information is not available.")
+        return None  # Explicitly return None if 'DateTime' is not found
 
-    return time  # Ensure the order is [longitude, latitude]
-
-
-def features2collection(image_dir, output_json_path):
+def features2collection(image_dir, output_json_path, dataset_category):
   """
   Converts features feature collection and writes to a geojson file.
   """
-  feature_list = features2list(image_dir)
+  feature_list = features2list(image_dir, dataset_category)
   feature_coll = {
     "type": "FeatureCollection",
     "features": [feature_list]
@@ -94,24 +98,25 @@ def features2collection(image_dir, output_json_path):
   df = gpd.GeoDataFrame.from_features(feature_coll)
   df.to_file(output_json_path, driver='GeoJSON')
 
-  def features2list(features):
+def features2list(features, dataset_category):
     """
-    Appends geojson features to a list
+Appends geojson features to a list
     """
     feature_coll = []
     for i in features:
-      finished_feature = image2json(i)
-      feature_coll.append(finished_feature)
-      return feature_coll
+         finished_feature = image2json(i, dataset_category)
+         feature_coll.append(finished_feature)
+         return feature_coll
     
 
-def image2json(image):
+def image2json(image, dataset_category):
     """
     Converts images to a GeoJSON feature.
     """
-    name = os.path.splitext(os.path.basename(test_photo))[0]
+    name = os.path.splitext(os.path.basename(image))[0] #was test_photo
     gps_data = get_gps_data(image)
-    date_tine = get_date_data(image)
+    date_time = get_date_data(image)
+    category = dataset_category
 
     return {
             "type": "Feature",
@@ -120,14 +125,25 @@ def image2json(image):
                 "coordinates": gps_data
             },
             "properties": {
-                "name": name
+                "name": name,
+                "date": date_time,
+                "category": category,
+                "notes": ""
             }
         }
 
-Directory = '/content/drive/MyDrive/ALD_photos_2024_processed'
-output_geojson = '/content/drive/MyDrive/ALD_photos_2024_processed/test.json'
-ald_photos = 'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
+output_geojson = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_13Jan2024.json'
+ald_photos = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
 # Example usage:
-# features2collection('/path/to/images', '/path/to/output.geojson')
+# features2collection('/path/to/images', '/path/to/output.geojson', 'string of dataset category")
 
-features2collection(ald_photos, output_geojson)
+#features2collection(ald_photos, output_geojson, "ALD/Slump")
+
+
+test_photo = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed\IMG_6573.jpg'
+
+image2json(test_photo, "ALD")
+
+#get_date_data(test_photo)
+
+
