@@ -9,7 +9,7 @@ import os
 from PIL import Image, ExifTags
 from pillow_heif import register_heif_opener
 from datetime import datetime
-#import re
+import re
 import geopandas as gpd
 import pandas as pd
 
@@ -55,4 +55,5 @@ def convert_heic_to_jpeg(dir_of_interest):
 Directory = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_raw'
 Output_directory = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
 
-convert_heic_to_jpeg(Directory)
+#convert_heic_to_jpeg(Directory)
+

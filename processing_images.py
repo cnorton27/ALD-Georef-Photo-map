@@ -4,10 +4,11 @@ import pandas as pd
 # Directory containing GeoJSON files
 data = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos.json'
 
-# https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/ALD_photos_2024_processed/IMG_5411.jpg
-                
+#add Github hosted image path to geojson feature collection
+
 gdf = gpd.read_file(data)
 image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/ALD_photos_2024_processed/"
+
 
 for index, row in gdf.iterrows():
     imgname = row['name']
@@ -16,4 +17,5 @@ for index, row in gdf.iterrows():
     gdf.loc[index, 'image_path'] = str(image_full_path)
 
 gdf.to_file("ALDs_processed.geojson", driver='GeoJSON')
+
 
