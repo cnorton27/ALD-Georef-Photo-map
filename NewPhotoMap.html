@@ -449,13 +449,8 @@
         };
 
         // get an array of all unique `icon` properties
-        const Disturbances = ['ALD photos', 'Drone Photos', 'Flood photos'];
+        const Disturbances = ['ALD photos', 'Drone Photos', 'Flood photos', 'Vegetation photos'];
 
-
-    //    for (const feature of source.features) {                                                          /// need to finish this code which populated Disturbances list
-   //         const DisturbanceType = feature.properties.user_login;
-   //         if (!Disturbances.includes(DisturbanceType)) Disturbances.push(DisturbanceType);
-   //     }
 
         // for each `icon` value, create a checkbox and label
         for (const DisturbanceType of Disturbances) {

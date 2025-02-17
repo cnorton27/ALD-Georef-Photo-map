@@ -106,13 +106,12 @@ def get_date_data(image_path):
 
 output_geojson = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_17Feb2025.json'
 ald_photos = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
-test_photo = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed\IMG_6573.jpg'
-test_photo2 = r'C:\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed\IMG_5412.jpg'
+
 # Example usage:
 # features2collection('/path/to/images', '/path/to/output.geojson', 'string of dataset category")
-ald_photos2 = [test_photo2, test_photo, test_photo]
 
-features2collection(ald_photos, output_geojson, "ALD/Slump")
+#features2collection(ald_photos, output_geojson, "ALD/Slump")
 
+#Use image_add_virtual_path.py script to add virtual file paths as a property to feature collection
 
 
