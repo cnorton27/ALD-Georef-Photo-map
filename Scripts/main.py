@@ -1,6 +1,10 @@
 from image2geojson import features2collection
 from image_add_virtual_path import adding_path
 from HEIC_to_jpg_processsing import convert_heic_to_jpeg
+import glob
+import os
+import geopandas as gpd
+import pandas as pd
 
 #This script takes directories of photos organized into categories (e.g. Flood, ALD/Slump, Drone, Vegetation) and converts into geojson feature
 #collection with properties including metadata on: photo coordinates, date and time taken, category and link to web-hosted photo
@@ -43,3 +47,21 @@ adding_path(veg_image_base_path, veg_df, veg_geojson)
 drone_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/drone_photos/"
 adding_path(drone_image_base_path, drone_df, drone_geojson)
 
+#combine feature collections:
+data_dir = r'Data'
+
+# Get a list of all GeoJSON files in the directory
+geojson_files = glob.glob(os.path.join(r'Data', '*.geojson'))
+
+gdfs = []
+# Iterate over each GeoJSON file and load it into GeoDataFrame
+for file in geojson_files:
+    gdf = gpd.read_file(file)
+    gdfs.append(gdf)
+
+output = r'Data\all_photos.geojson'
+
+combined_gdf = gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True))
+combined_gdf.to_file(output, driver='GeoJSON')
+
+print(combined_gdf.head())
