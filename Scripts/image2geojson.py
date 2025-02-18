@@ -101,7 +101,7 @@ def get_date_data(image_path):
     date = photo.get("Date", "Unknown")
     utc_time = photo.get("UTC-Time", "Unknown")
     
-    return [date, utc_time]
+    return str(date+ " "  + utc_time)
 
 
 
