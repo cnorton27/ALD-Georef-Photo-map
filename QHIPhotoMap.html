@@ -262,7 +262,7 @@
 
             map.addSource('ALD_photos', {
                 type: 'geojson',
-                data: 'https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/ALD_photos_with_path.geojson' // URL of GeoJSON data
+                data: 'https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/all_photos.geojson' // URL of GeoJSON data
             });
 
             map.addLayer({
@@ -456,7 +456,7 @@
         };
 
         // get an array of all unique `icon` properties
-        const Category = ['ALD/Slump', 'Drone Photos', 'Flood photos', 'Vegetation photos'];
+        const Category = ['ALD/Slump', 'Drone', 'Flood', 'Vegetation'];
 
         // for each `icon` value, create a checkbox and label
         for (const CategoryType of Category) {
