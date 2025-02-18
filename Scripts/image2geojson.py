@@ -19,7 +19,7 @@ import os
 import exifread
 
 
-def features2collection(image_dir, output_json_path, dataset_category):
+def features2collection(image_dir, dataset_category):
   """
   Converts features feature collection and writes to a geojson file.
   """
@@ -30,7 +30,8 @@ def features2collection(image_dir, output_json_path, dataset_category):
   }
   
   df = gpd.GeoDataFrame.from_features(feature_coll["features"], crs="EPSG:4326")
-  df.to_file(output_json_path, driver='GeoJSON')
+  return df
+  #df.to_file(output_json_path, driver='GeoJSON')
   
 
 def features2list(image_dir, dataset_category):
@@ -102,6 +103,21 @@ def get_date_data(image_path):
     utc_time = photo.get("UTC-Time", "Unknown")
     
     return str(date+ " "  + utc_time)
+
+#Image directories
+ALD_photos = r'Data\ALD_photos_2024'
+flood_photos = r'Data\FloodPhotos'
+
+#Output geojson files
+ALD_geojson = r'Data\Flood_photos_18Feb2025.geojson' #formerly .json
+
+# Example usage:
+# features2collection('/path/to/images', '/path/to/output.geojson', 'string of dataset category")
+
+#features2collection(flood_photos, output_geojson, "Flood")
+ALD_df = features2collection(ALD_photos, "ALD/Slump")
+
+print("ALD DATAFRAME", ALD_df)
 
 
 

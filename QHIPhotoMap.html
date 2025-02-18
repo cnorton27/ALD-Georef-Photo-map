@@ -288,10 +288,22 @@
                     'circle-stroke-width': .3,
                     'circle-stroke-color': '#fff',
                     'circle-opacity': 1
-                }
+                },
+                'filter': ['in', 'category', '']
             });
         
 
+            map.addLayer({
+                id: 'blank-photos',
+                type: 'circle',
+                source: 'ALD_photos',
+                paint: {
+                    'circle-color': '#11b4da',
+                    'circle-radius': 6,
+                    'circle-opacity': 0 //invisible
+                }
+            },
+            );
 
             canvas.addEventListener('mousedown', mouseDown, true);
 
@@ -366,7 +378,7 @@
 
                 if (bbox) {
                     const features = map.queryRenderedFeatures(bbox, {
-                        layers: ['ALD_photo_points']
+                        layers: ['blank-photos']
                     });
 
                     if (features.length >= 10000) {
@@ -398,7 +410,7 @@
            
         });
             
-        map.on('click', 'ALD_photo_points', (e) => {
+        map.on('click', 'blank-photos', (e) => {
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const PhotoName = e.features[0].properties.name;
                 var image_path = e.features[0].properties.image_path
@@ -440,11 +452,11 @@
                 .map((el) => el.id);
 
             // use an 'in' expression to filter the layer
-            map.setFilter('base-plants', ['in', 'user_login', ...checkedCategory]);
+            map.setFilter('ALD_photo_points', ['in', 'category', ...checkedCategory]);
         };
 
         // get an array of all unique `icon` properties
-        const Category = ['ALD photos', 'Drone Photos', 'Flood photos', 'Vegetation photos'];
+        const Category = ['ALD/Slump', 'Drone Photos', 'Flood photos', 'Vegetation photos'];
 
         // for each `icon` value, create a checkbox and label
         for (const CategoryType of Category) {
@@ -488,14 +500,14 @@
                 return uniqueFeatures;
             }
 
-            map.on('mousemove', 'ALD_photo_points', (e) => {
+            map.on('mousemove', 'blank-photos', (e) => {
 
                 // feature = plant that mouse is hovering over
                 const feature = e.features[0];
 
                 const current_feature = feature.properties.name
 
-                const relatedplants = map.querySourceFeatures('highlighted-plants', {  //'QHI-plants'
+                const relatedplants = map.querySourceFeatures('blank-photos', {  //'QHI-plants'
                     sourceLayer: 'original',
                     filter: ['in', 'name', current_feature]
                 });
@@ -508,9 +520,9 @@
 
                 const ID = document.createElement('div');
                 ID.textContent =
-                    feature.properties.category + " " +
-                    feature.properties.Date
-                    feature.properties.
+                    "Date " +
+                    feature.properties.date
+
 
                     //feature.properties.species_count
 
@@ -528,7 +540,7 @@
 
             });
 
-            map.on('mouseleave', 'QHI-plants', () => {
+            map.on('mouseleave', 'blank-photos', () => {
                 map.getCanvas().style.cursor = '';
                 popup3.remove();
                 map.setFilter('ALD_highlighted', ['in', 'name', '']);
