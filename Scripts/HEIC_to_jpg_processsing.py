@@ -2,7 +2,7 @@
 
 #import libraries
 from PIL.ExifTags import TAGS
-#import piexif
+import piexif
 import exif
 from exif import Image
 import os
@@ -20,40 +20,48 @@ import pandas as pd
 register_heif_opener()
 
 def convert_heic_to_jpeg(dir_of_interest):
-        filenames = os.listdir(dir_of_interest)
-        filenames_matched = [re.search(r"\.HEIC$|\.heic$", filename) for filename in filenames]
+    filenames = os.listdir(dir_of_interest)
+    HEIC_files = [f for f in filenames if re.search(r"\.HEIC$|\.heic$", f)]
 
-        # Extract files of interest
-        HEIC_files = []
-        for index, filename in enumerate(filenames_matched):
-                if filename:
-                        HEIC_files.append(filenames[index])
+    for filename in HEIC_files:
+        image_path = os.path.join(dir_of_interest, filename)
+        image = Image.open(image_path)
+        image_exif = image.getexif()
 
-        # Convert files to jpg while keeping the timestamp
-        for filename in HEIC_files:
-                image = Image.open(dir_of_interest + "/" + filename)
-                image_exif = image.getexif()
-                if image_exif:
-                        # Make a map with tag names and grab the datetime
-                        exif = { ExifTags.TAGS[k]: v for k, v in image_exif.items() if k in ExifTags.TAGS and type(v) is not bytes }
-                        date = datetime.strptime(exif['DateTime'], '%Y:%m:%d %H:%M:%S')
+        if image_exif:
+            # Map tag names to values
+            exif = {ExifTags.TAGS[k]: v for k, v in image_exif.items() if k in ExifTags.TAGS and type(v) is not bytes}
+            
+            # Debug: Print available EXIF keys
+            print(f"EXIF keys for {filename}: {list(exif.keys())}")
 
-                        # Load exif data via piexif
-                        exif_dict = piexif.load(image.info["exif"])
+            # Handle missing 'DateTime' field
+            date = None
+            if 'DateTime' in exif:
+                try:
+                    date = datetime.strptime(exif['DateTime'], '%Y:%m:%d %H:%M:%S')
+                except ValueError:
+                    print(f"Warning: Unexpected date format in {filename}: {exif['DateTime']}")
+            else:
+                print(f"Warning: No DateTime metadata found in {filename}")
 
-                        # Update exif data with orientation and datetime
-                        exif_dict["0th"][piexif.ImageIFD.DateTime] = date.strftime("%Y:%m:%d %H:%M:%S")
-                        exif_dict["0th"][piexif.ImageIFD.Orientation] = 1
-                        exif_bytes = piexif.dump(exif_dict)
+            # Load existing EXIF data
+            exif_dict = piexif.load(image.info.get("exif", b""))
 
-                        # Save image as jpeg
-                        image.save(dir_of_interest + "/" + os.path.splitext(filename)[0] + ".jpg", "jpeg", exif= exif_bytes)
-                else:
-                        print(f"Unable to get exif data for {filename}")
+            # Update EXIF fields safely
+            if date:
+                exif_dict["0th"][piexif.ImageIFD.DateTime] = date.strftime("%Y:%m:%d %H:%M:%S")
+            exif_dict["0th"][piexif.ImageIFD.Orientation] = 1
+            exif_bytes = piexif.dump(exif_dict)
+
+            # Save as JPEG
+            output_path = os.path.join(dir_of_interest, os.path.splitext(filename)[0] + ".jpg")
+            image.save(output_path, "jpeg", exif=exif_bytes)
+            
+        else:
+            print(f"Unable to get EXIF data for {filename}")
 
 #Execute jobs here:
 Directory = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_raw'
-Output_directory = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_processed'
-
 #convert_heic_to_jpeg(Directory)
 

@@ -19,9 +19,14 @@ import os
 import exifread
 
 
+#Use features2collection to convert image directory into geodataframe (gdf or geojson)
+
 def features2collection(image_dir, dataset_category):
   """
   Converts features feature collection and writes to a geojson file.
+
+  Example usage:
+  features2collection('/path/to/images', '/path/to/output.geojson', 'string of dataset category")
   """
   feature_list = features2list(image_dir, dataset_category)
   feature_coll = {
@@ -104,20 +109,6 @@ def get_date_data(image_path):
     
     return str(date+ " "  + utc_time)
 
-#Image directories
-ALD_photos = r'Data\ALD_photos_2024'
-flood_photos = r'Data\FloodPhotos'
-
-#Output geojson files
-ALD_geojson = r'Data\Flood_photos_18Feb2025.geojson' #formerly .json
-
-# Example usage:
-# features2collection('/path/to/images', '/path/to/output.geojson', 'string of dataset category")
-
-#features2collection(flood_photos, output_geojson, "Flood")
-ALD_df = features2collection(ALD_photos, "ALD/Slump")
-
-print("ALD DATAFRAME", ALD_df)
 
 
 
