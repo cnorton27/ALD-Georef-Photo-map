@@ -36,16 +36,16 @@ drone_df = features2collection(drone_photos, "Drone")
 
 #use adding_path to add web-hosted path to image
 
-ALD_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/ALD_photos/"
+ALD_image_base_path = "hhttps://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/ALD_photos/"
 adding_path(ALD_image_base_path, ALD_df, ALD_geojson)
 
 flood_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/flood_photos/"
 adding_path(flood_image_base_path, flood_df, flood_geojson)
 
-veg_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/veg_photos/"
+veg_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/veg_photos/"
 adding_path(veg_image_base_path, veg_df, veg_geojson)
 
-drone_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/drone_photos/"
+drone_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/"
 adding_path(drone_image_base_path, drone_df, drone_geojson)
 
 #combine feature collections:
