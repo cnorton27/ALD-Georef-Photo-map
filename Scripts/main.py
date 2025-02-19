@@ -22,6 +22,7 @@ veg_geojson = r'Data\veg_photos.geojson'
 drone_geojson = r'Data\drone_photos.geojson' 
 
 #Use convert_heic_to_jpeg to process photos into jpg (if not in jpg already), convert into feature collection and attach web-hosted link. Adds a copy of photo as jpg in directory
+
 #convert_heic_to_jpeg(flood_photos)
 #convert_heic_to_jpeg(veg_photos)
 #convert_heic_to_jpeg(ALD_photos)
@@ -38,7 +39,7 @@ drone_df = features2collection(drone_photos, "Drone")
 ALD_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/ALD_photos/"
 adding_path(ALD_image_base_path, ALD_df, ALD_geojson)
 
-flood_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/flood_photos/"
+flood_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/flood_photos/"
 adding_path(flood_image_base_path, flood_df, flood_geojson)
 
 veg_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/main/Data/veg_photos/"
@@ -63,5 +64,3 @@ output = r'Data\all_photos.geojson'
 
 combined_gdf = gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True))
 combined_gdf.to_file(output, driver='GeoJSON')
-
-print(combined_gdf.head())
