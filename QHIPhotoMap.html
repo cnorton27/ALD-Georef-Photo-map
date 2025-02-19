@@ -262,8 +262,11 @@
 
             map.addSource('ALD_photos', {
                 type: 'geojson',
-                data: 'https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/all_photos.geojson' // URL of GeoJSON data
+                data: 'https://cnorton27.github.io/ALD-Georef-Photo-map/Data/all_photos.geojson' // URL of GeoJSON data
             });
+
+  
+  
 
             map.addLayer({
                 id: 'ALD_photo_points',
@@ -414,11 +417,11 @@
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const PhotoName = e.features[0].properties.name;
                 var image_path = e.features[0].properties.image_path
+                
 
                 const image_popup = `
                 <div class="ald_popup">
-                <h3>${PhotoName}</h3>
-
+                
 
                 <img src="${image_path}" alt="${PhotoName}" style="width: auto; height: 400px;">
                 '</div>'
