@@ -36,7 +36,7 @@ drone_df = features2collection(drone_photos, "Drone")
 
 #use adding_path to add web-hosted path to image
 
-ALD_image_base_path = "hhttps://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/ALD_photos/"
+ALD_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/ALD_photos/"
 adding_path(ALD_image_base_path, ALD_df, ALD_geojson)
 
 flood_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/flood_photos/"
