@@ -3,7 +3,9 @@
 "name": "drone_photos",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "name": "100_0015_0221_DOWNSIZED", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0015_0221_DOWNSIZED.jpg" }, "geometry": { "type": "Point", "coordinates": [ 0.0, 0.0 ] } },
-{ "type": "Feature", "properties": { "name": "100_0016_0019_DOWNSIZED", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0016_0019_DOWNSIZED.jpg" }, "geometry": { "type": "Point", "coordinates": [ 0.0, 0.0 ] } }
+{ "type": "Feature", "properties": { "name": "100_0002_0005_", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0002_0005_.jpg" }, "geometry": { "type": "Point", "coordinates": [ -139.084477527777779, 69.601596333333333 ] } },
+{ "type": "Feature", "properties": { "name": "100_0002_0005_new", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0002_0005_new.jpg" }, "geometry": { "type": "Point", "coordinates": [ -138.894285583333328, 69.57091777777778 ] } },
+{ "type": "Feature", "properties": { "name": "100_0015_0221_DOWNSIZED_new", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0015_0221_DOWNSIZED_new.jpg" }, "geometry": { "type": "Point", "coordinates": [ 0.0, 0.0 ] } },
+{ "type": "Feature", "properties": { "name": "100_0016_0019_DOWNSIZED_new", "date": "Unknown Unknown", "category": "Drone", "notes": "", "image_path": "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/100_0016_0019_DOWNSIZED_new.jpg" }, "geometry": { "type": "Point", "coordinates": [ 0.0, 0.0 ] } }
 ]
 }
