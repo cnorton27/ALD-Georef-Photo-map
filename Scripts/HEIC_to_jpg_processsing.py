@@ -23,7 +23,7 @@ def convert_heic_to_jpeg(dir_of_interest):
     filenames = os.listdir(dir_of_interest)
     HEIC_files = [f for f in filenames if re.search(r"\.HEIC$|\.heic$", f)]
 
-    for filename in filenames: #HEIC_files:
+    for filename in HEIC_files:
         image_path = os.path.join(dir_of_interest, filename)
         image = Image.open(image_path)
         image_exif = image.getexif()
@@ -66,5 +66,5 @@ def convert_heic_to_jpeg(dir_of_interest):
 
 #Execute jobs here:
 Directory = r'Data\drone_photos'
-convert_heic_to_jpeg(Directory)
+#convert_heic_to_jpeg(Directory)
 
