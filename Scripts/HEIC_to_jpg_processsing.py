@@ -23,7 +23,7 @@ def convert_heic_to_jpeg(dir_of_interest):
     filenames = os.listdir(dir_of_interest)
     HEIC_files = [f for f in filenames if re.search(r"\.HEIC$|\.heic$", f)]
 
-    for filename in HEIC_files:
+    for filename in filenames: #HEIC_files:
         image_path = os.path.join(dir_of_interest, filename)
         image = Image.open(image_path)
         image_exif = image.getexif()
@@ -56,12 +56,15 @@ def convert_heic_to_jpeg(dir_of_interest):
 
             # Save as JPEG
             output_path = os.path.join(dir_of_interest, os.path.splitext(filename)[0] + ".jpg")
-            image.save(output_path, "jpeg", exif=exif_bytes)
+            image.save(output_path, "jpg", exif=exif_bytes)
             
         else:
             print(f"Unable to get EXIF data for {filename}")
+            exif_bytes = piexif.dump(exif_dict)
+            image.save(output_path, "jpg", exif=exif_bytes)
+
 
 #Execute jobs here:
-Directory = r'C:\Users\ciara\OneDrive\Documents\GitHub\ALD-Georef-Photo-map\ALD_photos_2024_raw'
-#convert_heic_to_jpeg(Directory)
+Directory = r'Data\drone_photos'
+convert_heic_to_jpeg(Directory)
 
