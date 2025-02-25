@@ -45,7 +45,7 @@ adding_path(flood_image_base_path, flood_df, flood_geojson)
 veg_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/veg_photos/"
 adding_path(veg_image_base_path, veg_df, veg_geojson)
 
-drone_image_base_path = "https://cnorton27.github.io/ALD-Georef-Photo-map/Data/drone_photos" #"https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/"
+drone_image_base_path = "https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/" #"https://cnorton27.github.io/ALD-Georef-Photo-map/Data/drone_photos"   #"https://raw.githubusercontent.com/cnorton27/ALD-Georef-Photo-map/refs/heads/main/Data/drone_photos/"
 adding_path(drone_image_base_path, drone_df, drone_geojson)
 
 #combine feature collections:
