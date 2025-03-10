@@ -523,17 +523,23 @@
 
                 const ID = document.createElement('div');
                 ID.textContent =
+                    "Photo name: " +
+                    feature.properties.name +
+                    "   "
+
+                const ID2 = document.createElement('div');
+                ID2.textContent =
                     "Date " +
                     feature.properties.date
 
-
-                    //feature.properties.species_count
+        //feature.properties.species_count
 
                 overlay.innerHTML = '';
                 overlay.style.display = 'block';
 
                 overlay.appendChild(title);
                 overlay.appendChild(ID);
+                overlay.appendChild(ID2)
 
                 map.setFilter('ALD_highlighted', [
                     'in',
