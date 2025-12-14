@@ -55,16 +55,17 @@ def convert_heic_to_jpeg(dir_of_interest):
             exif_bytes = piexif.dump(exif_dict)
 
             # Save as JPEG
-            output_path = os.path.join(dir_of_interest, os.path.splitext(filename)[0] + ".jpg")
-            image.save(output_path, "jpg", exif=exif_bytes)
+            output_path = os.path.join(dir_of_interest, os.path.splitext(filename)[0] + ".jpeg")
+            image.save(output_path, "jpeg", exif=exif_bytes)
             
         else:
             print(f"Unable to get EXIF data for {filename}")
             exif_bytes = piexif.dump(exif_dict)
-            image.save(output_path, "jpg", exif=exif_bytes)
+            image.save(output_path, "jpeg", exif=exif_bytes)
 
 
 #Execute jobs here:
 Directory = r'Data\drone_photos'
-#convert_heic_to_jpeg(Directory)
+Directory = r"C:\Users\ciara\Downloads\Receipts June 5 -20250629T024706Z-1-001\Receipts June 5"
+convert_heic_to_jpeg(Directory)
 
